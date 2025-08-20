@@ -99,6 +99,11 @@ Average (tp)	26.0
 Conclusion for Part 1:
 
 The NAND gate is generally faster than the NOR gate for a given load because its PMOS pull-up network is parallel, offering lower resistance. The NOR gate's series PMOS transistors result in a slower tpLH.
+
+
+
+
+
 Part 2: Reduction of Computational Complexity for AES Algorithm using Modified Dual CLCG-based Key Generation
 This section addresses optimizing a computationally intensive part of a critical cryptographic algorithm.
 
