@@ -1,0 +1,55 @@
+Part 2: Reduction of Computational Complexity for AES Algorithm using Modified Dual CLCG-based Key Generation
+This section addresses optimizing a computationally intensive part of a critical cryptographic algorithm.
+
+1. The Problem with AES Key Expansion
+The Advanced Encryption Standard (AES) algorithm is robust but computationally expensive, especially in resource-constrained environments (IoT devices, RFID tags). A significant part of this cost is the Key Expansion routine.
+
+The standard Key Expansion uses complex operations like SubBytes (S-Box lookup) and XORs for each round key.
+
+For every block of data encrypted, a new set of round keys must be derived from the original cipher key. This is a repetitive and costly process.
+
+2. Proposed Solution: Modified Dual CLCG
+The proposal is to replace the traditional AES key expansion with a cryptographically secure Pseudorandom Number Generator (PRNG) to pre-generate the round keys.
+
+LCG (Linear Congruential Generator): A simple PRNG defined by the recurrence: Xₙ₊₁ = (a * Xₙ + c) mod m
+
+Advantage: Extremely low computational complexity (a multiply and an add).
+
+Disadvantage: Not secure on its own; predictable if parameters are known.
+
+Dual CLCG: Using two LCGs where the output of one perturbs the state of the other, increasing the period and improving randomness.
+
+Modified Dual CLCG (Cross-Linked CLCG): A more advanced modification where the outputs of the two LCGs are combined (e.g., via XOR or addition) to form the final output. This further obscures the relationship between the internal state and the output sequence, enhancing security.
+
+CLCG1: S1ₙ₊₁ = (a1 * S1ₙ + c1) mod m1
+
+CLCG2: S2ₙ₊₁ = (a2 * S2ₙ + c2) mod m2
+
+Output: Outputₙ = (S1ₙ + S2ₙ) mod m OR Outputₙ = S1ₙ XOR S2ₙ
+
+3. How it Reduces Complexity
+Pre-computation: The round keys for an entire encryption session (e.g., 10 rounds for AES-128) are generated once at the start using the CLCG, seeded with the original cipher key.
+
+Replacement: Instead of running the full Key Expansion routine before every encryption, the algorithm simply fetches the pre-generated round keys from memory.
+
+Complexity Comparison:
+
+Standard AES Key Expansion: Involves Nk * (Nr + 1) iterations of S-Box lookups, XORs, and Rcon operations (where Nk is key words, Nr is rounds).
+
+CLCG Key Generation: Involves Nb * (Nr + 1) iterations of a few modular multiplications and additions. This is mathematically much simpler than S-Box lookups and conditional XORs.
+
+4. Integration and Security Considerations
+Seed: The original 128/192/256-bit AES cipher key is split to seed the initial states (S1₀, S2₀) and parameters of the dual CLCGs.
+
+Cryptographic Security: The parameters (a1, a2, c1, c2, m1, m2) must be chosen very carefully to ensure a long period and meet cryptographic standards for randomness (e.g., passing statistical test suites like NIST SP 800-22). The "modification" (cross-linking) is crucial to achieve this security.
+
+Throughput: For applications that encrypt long streams of data, the reduction in per-block overhead significantly increases overall encryption/decryption throughput.
+
+5. Conclusion for Part 2
+Replacing the traditional AES key schedule with a pre-computation step using a secure, modified Dual CLCG presents a promising trade-off:
+
+Advantage: A significant reduction in computational complexity and an increase in processing throughput.
+
+Challenge: Requires rigorous cryptographic analysis to ensure the PRNG does not introduce vulnerabilities, making the overall system less secure than the proven AES key expansion. The security of the entire system now rests on the strength of the CLCG.
+
+This project demonstrates a complete cycle from the transistor-level design of basic logic to the architectural-level optimization of a complex algorithm, highlighting the different layers of abstraction in VLSI and system design.
